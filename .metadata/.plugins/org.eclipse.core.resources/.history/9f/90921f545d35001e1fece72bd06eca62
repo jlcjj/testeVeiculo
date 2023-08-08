@@ -1,0 +1,81 @@
+package com.axios.Veiculos.rest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.axios.Veiculos.models.Veiculo;
+import com.axios.Veiculos.service.VeiculoService;
+
+@RestController
+@RequestMapping("/api/veiculos")
+public class VeiculoController {
+	
+	@Autowired
+	private VeiculoService service;
+	
+	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
+	public String salvar(@RequestBody  Veiculo veiculo) {
+		return service.salvar(veiculo);
+	}
+	
+	@GetMapping("{id}")
+	public Veiculo buscarPorId(@PathVariable Integer id) {
+		return service.buscarPorId(id);
+		
+		
+	}
+	@PutMapping("/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public String atualizar(@PathVariable Integer id, @RequestBody Veiculo veiculoAtualizado) {
+		
+		return service.atualizar(id, veiculoAtualizado);
+	}
+		
+	
+	
+
+	@DeleteMapping("/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deletarPorId(@PathVariable Integer id) {
+		service.deletarPorId(id);
+	} 
+	@GetMapping("/pesquisa")
+    public Page<Veiculo> search(
+            @RequestParam("filtro") String searchTerm,
+            @RequestParam(
+                    value = "page",
+                    required = false,
+                    defaultValue = "0") int page,
+            @RequestParam(
+                    value = "size",
+                    required = false,
+                    defaultValue = "5") int size) {
+        return service.search(searchTerm, page, size);
+
+    }
+
+    /*public Page<Veiculo> getAll(Pageable pageable) {
+        return service.findAll(pageable);
+    }*/
+	@GetMapping
+    public Page<Veiculo> findAll(Integer page) {
+		Integer size = 5;
+		PageRequest pageable = PageRequest.of(page, size);
+		return service.findAll(page);
+    }
+	
+}

@@ -1,0 +1,5 @@
+package com.axios.Veiculos.repository;
+
+public interface VeiculoRepository {
+
+}

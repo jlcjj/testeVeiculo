@@ -1,0 +1,5 @@
+package com.axios.Veiculos.rest.exception;
+
+public class ApiErrors {
+
+}

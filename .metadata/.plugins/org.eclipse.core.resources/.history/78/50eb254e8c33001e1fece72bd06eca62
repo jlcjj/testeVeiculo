@@ -1,0 +1,6 @@
+package com.axios.Veiculos.models;
+
+
+public class Veiculo {
+
+}

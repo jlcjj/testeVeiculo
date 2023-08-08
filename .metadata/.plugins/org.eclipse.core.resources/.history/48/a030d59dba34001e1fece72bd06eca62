@@ -1,0 +1,44 @@
+package com.axios.Veiculos.service;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
+
+import com.axios.Veiculos.models.Veiculo;
+import com.axios.Veiculos.repository.VeiculoRepository;
+import org.springframework.data.domain.Sort;
+
+@Service
+public class VeiculoService {
+	private VeiculoRepository repository;
+	
+	public Page<Veiculo> search(
+            String searchTerm,
+            int page,
+            int size) {
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                size,
+                Sort.Direction.ASC,
+                "name");
+
+        return repository.search(
+                searchTerm.toLowerCase(),
+                pageRequest);
+    }
+
+	public Page<Veiculo> findAll() {
+        int page = 0;
+        int size = 10;
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                size,
+                Sort.Direction.ASC,
+                "name");
+        return new PageImpl<>(
+                repository.findAll(), 
+                pageRequest, size);
+    }
+	
+}

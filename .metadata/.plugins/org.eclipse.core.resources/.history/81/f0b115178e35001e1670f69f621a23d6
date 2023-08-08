@@ -1,0 +1,5 @@
+package com.axios.Veiculos.rest;
+
+public class ApplicationControllerAdvice {
+
+}

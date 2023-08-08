@@ -1,0 +1,95 @@
+package com.axios.Veiculos.rest;
+
+import java.util.Calendar;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
+import com.axios.Veiculos.models.Veiculo;
+import com.axios.Veiculos.repository.VeiculoRepository;
+
+@RestController
+@RequestMapping("/api/veiculos")
+public class VeiculoController {
+	
+	private VeiculoRepository repository;
+	
+	
+	@Autowired
+	public VeiculoController(VeiculoRepository repository) {
+		this.repository = repository;
+	}
+	
+	@PostMapping
+	@ResponseStatus(HttpStatus.CREATED)
+	public String salvar(@RequestBody  Veiculo veiculo) {
+		Calendar cal = Calendar.getInstance();
+		int year = cal.get(Calendar.YEAR);
+		if(veiculo.getAno() > year || veiculo.getPreco().intValue() < 0)
+		{
+			if(veiculo.getAno() > year) {
+			return   "Erro => Ano não pode ser maior que " + year;
+			}else {
+				return   "Erro => Preço não pode ser negativo.";
+			}
+		}else {	
+			repository.save(veiculo);
+			return "Veiculo Salvo com sucesso!"; 
+		}
+	}
+	
+	@GetMapping("{id}")
+	public Veiculo buscarPorId(@PathVariable Integer id) {
+		return repository.findById(id)
+				.orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		
+	}
+	
+	@GetMapping()
+	public List <Veiculo> listarVeiculos() {
+		return repository.findAll();
+		
+	}
+	
+
+	@DeleteMapping("/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void deletarPorId(@PathVariable Integer id) {
+		buscarPorId(id);
+
+		repository.deleteById(id);
+
+	} 
+	
+	@PutMapping("/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public String atualizar(@PathVariable Integer id, @RequestBody Veiculo veiculoAtualizado) {
+		Calendar cal = Calendar.getInstance();
+		int year = cal.get(Calendar.YEAR);
+		buscarPorId(id);
+		if(veiculoAtualizado.getAno() > year || veiculoAtualizado.getPreco().intValue() < 0)
+		{
+			if(veiculoAtualizado.getAno() > year) {
+				return   "Erro => Ano não pode ser maior que " + year;
+				}else {
+					return   "Erro => Preço não pode ser negativo.";
+				}
+		}else {	
+		veiculoAtualizado.setId(id);
+		
+		 repository.save(veiculoAtualizado);
+		 return "Veiculo atualizado com sucesso!"; 
+		}
+	}
+}
